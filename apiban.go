@@ -98,26 +98,26 @@ func Banned(key string, startFrom string, set string) (*Entry, error) {
 	}
 
 	url := RootURL + "get"
-	for {
-		e, err := queryServerv2(key, p_json, url)
-		if err != nil {
-			return nil, err
-		}
-
-		if e.ID == "none" {
-			// List complete
-			return out, nil
-		}
-		if e.ID == "" {
-			return nil, errors.New("empty ID received")
-		}
-
-		// Set the next ID
-		out.ID = e.ID
-
-		// Aggregate the received IPs
-		out.IPs = append(out.IPs, e.IPs...)
+	e, err := queryServerv2(key, p_json, url)
+	if err != nil {
+		return nil, err
 	}
+
+	if e.ID == "none" {
+		// List complete
+		return out, nil
+	}
+
+	if e.ID == "" {
+		return nil, errors.New("empty ID received")
+	}
+
+	// Set the next ID
+	out.ID = e.ID
+
+	// Aggregate the received IPs
+	out.IPs = append(out.IPs, e.IPs...)
+	return out, nil
 }
 
 // Check queries APIBAN.org to see if the provided IP address is blocked.
